@@ -10,16 +10,17 @@
 """
 
 # ====================================================================
-# |     ______                   _______                             |
-# |    / _____________ __  __   / ____(_____  ____ _____  ________   |
-# |   / /_  / ___/ __ `| |/_/  / /_  / / __ \/ __ `/ __ \/ ___/ _ \  |
-# |  / __/ / /  / /_/ _>  <   / __/ / / / / / /_/ / / / / /__/  __/  |
-# | /_/   /_/   \__,_/_/|_|  /_/   /_/_/ /_/\__,_/_/ /_/\___/\___/   |
-# |                                                                  |
+#             _____ _____  ______ _                            
+#            /  __ |____ | |  ___(_)                           
+#           | /  \/   / / | |_   _ _ __   __ _ _ __   ___ ___ 
+#           | |       \ \ |  _| | | '_ \ / _` | '_ \ / __/ _ \
+#           | \__/.___/ / | |   | | | | | (_| | | | | (_|  __/
+#            \____\____/  \_|   |_|_| |_|\__,_|_| |_|\___\___|
+#                                                 
 # ====================================================================
-# =============================== veFXS ==============================
+# =============================== veC3 ==============================
 # ====================================================================
-# Frax Finance: https://github.com/FraxFinance
+# Original pulled from Frax Finance: https://github.com/FraxFinance
 
 # Original idea and credit:
 # Curve Finance's veCRV
@@ -27,6 +28,8 @@
 # https://github.com/curvefi/curve-dao-contracts/blob/master/contracts/VotingEscrow.vy
 # veFXS is basically a fork, with the key difference that 1 FXS locked for 1 second would be ~ 1 veFXS,
 # As opposed to ~ 0 veFXS (as it is with veCRV)
+# veC3 is a fork veFXS with variables renamed to C3 
+#  "'can I copy your homework?'/ 'yeah just change it up a bit so it doesn't look obvious you copied' / 'ok'
 
 # Frax Reviewer(s) / Contributor(s)
 # Travis Moore: https://github.com/FortisFortuna
@@ -51,7 +54,7 @@ struct Point:
     slope: int128  # - dweight / dt
     ts: uint256
     blk: uint256  # block
-    fxs_amt: uint256
+    c3_amt: uint256
 # We cannot really do block numbers per se b/c slope is per time, not per block
 # and per block could be fairly bad b/c Ethereum changes blocktimes.
 # What we can do is to extrapolate ***At functions
@@ -157,7 +160,7 @@ def __init__(token_addr: address, _name: String[64], _symbol: String[32], _versi
     self.token = token_addr
     self.point_history[0].blk = block.number
     self.point_history[0].ts = block.timestamp
-    self.point_history[0].fxs_amt = 0
+    self.point_history[0].c3_amt = 0
     self.controller = msg.sender
     self.transfersEnabled = True
 
@@ -214,7 +217,7 @@ def apply_smart_wallet_checker():
 @external
 def toggleEmergencyUnlock():
     """
-    @dev Used to allow early withdrawals of veFXS back into FXS, in case of an emergency
+    @dev Used to allow early withdrawals of veC3 back into C3, in case of an emergency
     """
     assert msg.sender == self.admin  # dev: admin only
     self.emergencyUnlockActive = not (self.emergencyUnlockActive)
@@ -222,10 +225,10 @@ def toggleEmergencyUnlock():
 @external
 def recoverERC20(token_addr: address, amount: uint256):
     """
-    @dev Used to recover non-FXS ERC20 tokens
+    @dev Used to recover non-C3 ERC20 tokens
     """
     assert msg.sender == self.admin  # dev: admin only
-    assert token_addr != self.token  # Cannot recover FXS. Use toggleEmergencyUnlock instead and have users pull theirs out individually
+    assert token_addr != self.token  # Cannot recover C3. Use toggleEmergencyUnlock instead and have users pull theirs out individually
     ERC20(token_addr).transfer(self.admin, amount)
 
 @internal
@@ -310,11 +313,11 @@ def _checkpoint(addr: address, old_locked: LockedBalance, new_locked: LockedBala
             else:
                 new_dslope = self.slope_changes[new_locked.end]
 
-    last_point: Point = Point({bias: 0, slope: 0, ts: block.timestamp, blk: block.number, fxs_amt: 0})
+    last_point: Point = Point({bias: 0, slope: 0, ts: block.timestamp, blk: block.number, c3_amt: 0})
     if _epoch > 0:
         last_point = self.point_history[_epoch]
     else:
-        last_point.fxs_amt = ERC20(self.token).balanceOf(self) # saves gas by only calling once
+        last_point.c3_amt = ERC20(self.token).balanceOf(self) # saves gas by only calling once
     last_checkpoint: uint256 = last_point.ts
     # initial_last_point is used for extrapolation to calculate block number
     # (approximately, for *At methods) and save them
@@ -351,7 +354,7 @@ def _checkpoint(addr: address, old_locked: LockedBalance, new_locked: LockedBala
         # Fill for the current block, if applicable
         if t_i == block.timestamp:
             last_point.blk = block.number
-            last_point.fxs_amt = ERC20(self.token).balanceOf(self)
+            last_point.c3_amt = ERC20(self.token).balanceOf(self)
             break
         else:
             self.point_history[_epoch] = last_point
@@ -395,7 +398,7 @@ def _checkpoint(addr: address, old_locked: LockedBalance, new_locked: LockedBala
         self.user_point_epoch[addr] = user_epoch
         u_new.ts = block.timestamp
         u_new.blk = block.number
-        u_new.fxs_amt = convert(self.locked[addr].amount, uint256)
+        u_new.c3_amt = convert(self.locked[addr].amount, uint256)
         self.user_point_history[addr][user_epoch] = u_new
 
 
@@ -548,7 +551,7 @@ def withdraw():
 # The following ERC20/minime-compatible methods are not real balanceOf and supply!
 # They measure the weights for the purpose of voting, so they don't represent
 # real coins.
-# FRAX adds minimal 1-1 FXS/veFXS, as well as a voting multiplier
+# FRAX adds minimal 1-1 C3/veC3, as well as a voting multiplier
 
 @internal
 @view
@@ -593,7 +596,7 @@ def balanceOf(addr: address, _t: uint256 = block.timestamp) -> uint256:
             last_point.bias = 0
 
         unweighted_supply: uint256 = convert(last_point.bias, uint256) # Original from veCRV
-        weighted_supply: uint256 = last_point.fxs_amt + (VOTE_WEIGHT_MULTIPLIER * unweighted_supply)
+        weighted_supply: uint256 = last_point.c3_amt + (VOTE_WEIGHT_MULTIPLIER * unweighted_supply)
         return weighted_supply
 
 
@@ -644,9 +647,9 @@ def balanceOfAt(addr: address, _block: uint256) -> uint256:
     upoint.bias -= upoint.slope * convert(block_time - upoint.ts, int128)
 
     unweighted_supply: uint256 = convert(upoint.bias, uint256) # Original from veCRV
-    weighted_supply: uint256 = upoint.fxs_amt + (VOTE_WEIGHT_MULTIPLIER * unweighted_supply)
+    weighted_supply: uint256 = upoint.c3_amt + (VOTE_WEIGHT_MULTIPLIER * unweighted_supply)
 
-    if ((upoint.bias >= 0) or (upoint.fxs_amt >= 0)):
+    if ((upoint.bias >= 0) or (upoint.c3_amt >= 0)):
         return weighted_supply
     else:
         return 0
@@ -679,7 +682,7 @@ def supply_at(point: Point, t: uint256) -> uint256:
     if last_point.bias < 0:
         last_point.bias = 0
     unweighted_supply: uint256 = convert(last_point.bias, uint256) # Original from veCRV
-    weighted_supply: uint256 = last_point.fxs_amt + (VOTE_WEIGHT_MULTIPLIER * unweighted_supply)
+    weighted_supply: uint256 = last_point.c3_amt + (VOTE_WEIGHT_MULTIPLIER * unweighted_supply)
     return weighted_supply
 
 
@@ -725,27 +728,27 @@ def totalSupplyAt(_block: uint256) -> uint256:
 
 @external
 @view
-def totalFXSSupply() -> uint256:
+def totalC3Supply() -> uint256:
     """
-    @notice Calculate FXS supply
+    @notice Calculate C3 supply
     @dev Adheres to the ERC20 `totalSupply` interface for Aragon compatibility
-    @return Total FXS supply
+    @return Total C3 supply
     """
     return ERC20(self.token).balanceOf(self)
 
 @external
 @view
-def totalFXSSupplyAt(_block: uint256) -> uint256:
+def totalC3SupplyAt(_block: uint256) -> uint256:
     """
-    @notice Calculate total FXS at some point in the past
+    @notice Calculate total C3 at some point in the past
     @param _block Block to calculate the total voting power at
-    @return Total FXS supply at `_block`
+    @return Total C3 supply at `_block`
     """
     assert _block <= block.number
     _epoch: uint256 = self.epoch
     target_epoch: uint256 = self.find_block_epoch(_block, _epoch)
     point: Point = self.point_history[target_epoch]
-    return point.fxs_amt
+    return point.c3_amt
 
 @external
 def changeController(_newController: address):

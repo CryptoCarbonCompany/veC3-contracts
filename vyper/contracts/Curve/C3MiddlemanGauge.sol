@@ -48,7 +48,7 @@ contract C3MiddlemanGauge is Owned, ReentrancyGuard {
     /* ========== STATE VARIABLES ========== */
 
     // Instances and addresses
-    address public reward_token_address = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0; // C3 Reward Token TODO: Replace with C3 Address
+    address public reward_token_address = 0xed4933b6E94FddE8dF3Be3258307dFAC0e8c9A4c; // C3 Reward Token TODO: Replace with mainnet C3 Address
     address public rewards_distributor_address;
 
     // Informational

@@ -1,5 +1,4 @@
-# @version 0.3.1
-
+# @version 0.2.8
 """
 @title Gauge Controller
 @author Curve Finance
@@ -8,13 +7,13 @@
 """
 
 # ====================================================================
-//             _____ _____  ______ _
-//            /  __ |____ | |  ___(_)
-//           | /  \/   / / | |_   _ _ __   __ _ _ __   ___ ___
-//           | |       \ \ |  _| | | '_ \ / _` | '_ \ / __/ _ \
-//           | \__/.___/ / | |   | | | | | (_| | | | | (_|  __/
-//           \____\____/  \_|   |_|_| |_|\__,_|_| |_|\___\___|
-//
+#             _____ _____  ______ _
+#            /  __ |____ | |  ___(_)
+#            | /  \/   / / | |_   _ _ __   __ _ _ __   ___ ___
+#            | |       \ \ |  _| | | |_ \ / _` | |_ \ / __/ _ \
+#            | \__/.___/ / | |   | | | | | (_| | | | | (_|  __/
+#             \____\____/  \_|   |_|_| |_|\__,_|_| |_|\___\___|
+#
 # ====================================================================
 # ======================= C3GaugeControllerV2 ======================
 # ====================================================================
@@ -29,7 +28,7 @@
 # Original pulled from Frax Finance: https://github.com/FraxFinance
 # Frax Finance: https://github.com/FraxFinance
 # C3GaugeC3RewardsDistributor is a fork of Frax version with variables renamed to C3
-#  "'can I copy your homework?'/ 'yeah just change it up a bit so it doesn't look obvious you copied' / 'ok'
+# Can I copy your homework?/ yeah just change it up a bit so it doesnt look obvious you copied / ok
 
 # Frax Reviewer(s) / Contributor(s)
 # Travis Moore: https://github.com/FortisFortuna
@@ -52,7 +51,7 @@ struct CorrectedPoint:
     bias: uint256
     slope: uint256
     lock_end: uint256
-    fxs_amount: uint256
+    c3_amount: uint256
 
 struct VotedSlope:
     slope: uint256
@@ -590,7 +589,7 @@ def vote_for_gauge_weights(_gauge_addr: address, _user_weight: uint256):
     power_used: uint256 = self.vote_user_power[msg.sender]
     power_used = power_used + new_slope.power - old_slope.power
     self.vote_user_power[msg.sender] = power_used
-    assert (power_used >= 0) and (power_used <= 10000), 'Used too much power'
+    assert (power_used >= 0) and (power_used <= 10000), "Used too much power"
 
     ## Remove old and schedule new slope changes
     # Remove slope changes for old slopes

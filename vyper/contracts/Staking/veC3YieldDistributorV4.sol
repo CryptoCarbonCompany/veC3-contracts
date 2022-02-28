@@ -12,8 +12,8 @@ pragma solidity >=0.8.0;
 // ====================================================================
 // ================== veC3YieldDistributorV4.sol ==================
 // ==================================================================== 
-// Distributes Frax protocol yield based on the claimer's veFXS balance
-// V3: Yield will now not accrue for unlocked veFXS
+// Distributes Frax protocol yield based on the claimer's veC3 balance
+// V3: Yield will now not accrue for unlocked veC3
 
 // Frax Finance: https://github.com/FraxFinance
 
@@ -26,24 +26,26 @@ pragma solidity >=0.8.0;
 
 // Originally inspired by Synthetix.io, but heavily modified by the Frax team (veFXS portion)
 // https://github.com/Synthetixio/synthetix/blob/develop/contracts/StakingRewards.sol
+// veC3YieldDistributorV4 is a fork of veFXSYieldDistributorV4 with variables renamed to C3 
+// "'can I copy your homework?'/ 'yeah just change it up a bit so it doesn't look obvious you copied' / 'ok'
 
 import "../Math/Math.sol";
 import "../Math/SafeMath.sol";
-import "../Curve/IveFXS.sol";
+import "../Curve/IveC3.sol";
 import "../Uniswap/TransferHelper.sol";
 import "../ERC20/ERC20.sol";
 import "../ERC20/SafeERC20.sol";
 import "../Utils/ReentrancyGuard.sol";
 import "./Owned.sol";
 
-contract veFXSYieldDistributorV4 is Owned, ReentrancyGuard {
+contract veC3YieldDistributorV4 is Owned, ReentrancyGuard {
     using SafeMath for uint256;
     using SafeERC20 for ERC20;
 
     /* ========== STATE VARIABLES ========== */
 
     // Instances
-    IveFXS private veFXS;
+    IveC3 private veC3;
     ERC20 public emittedToken;
 
     // Addresses
@@ -63,16 +65,16 @@ contract veFXSYieldDistributorV4 is Owned, ReentrancyGuard {
     mapping(address => bool) public reward_notifiers;
 
     // Yield tracking
-    uint256 public yieldPerVeFXSStored = 0;
+    uint256 public yieldPerVeC3Stored = 0;
     mapping(address => uint256) public userYieldPerTokenPaid;
     mapping(address => uint256) public yields;
 
-    // veFXS tracking
-    uint256 public totalVeFXSParticipating = 0;
-    uint256 public totalVeFXSSupplyStored = 0;
+    // veC3 tracking
+    uint256 public totalVeC3Participating = 0;
+    uint256 public totalVeC3SupplyStored = 0;
     mapping(address => bool) public userIsInitialized;
-    mapping(address => uint256) public userVeFXSCheckpointed;
-    mapping(address => uint256) public userVeFXSEndpointCheckpointed;
+    mapping(address => uint256) public userVeC3Checkpointed;
+    mapping(address => uint256) public userVeC3EndpointCheckpointed;
     mapping(address => uint256) private lastRewardClaimTime; // staker addr -> timestamp
 
     // Greylists
@@ -109,12 +111,12 @@ contract veFXSYieldDistributorV4 is Owned, ReentrancyGuard {
         address _owner,
         address _emittedToken,
         address _timelock_address,
-        address _veFXS_address
+        address _veC3_address
     ) Owned(_owner) {
         emitted_token_address = _emittedToken;
         emittedToken = ERC20(_emittedToken);
 
-        veFXS = IveFXS(_veFXS_address);
+        veC3 = IveC3(_veC3_address);
         lastUpdateTime = block.timestamp;
         timelock_address = _timelock_address;
 
@@ -124,26 +126,26 @@ contract veFXSYieldDistributorV4 is Owned, ReentrancyGuard {
     /* ========== VIEWS ========== */
 
     function fractionParticipating() external view returns (uint256) {
-        return totalVeFXSParticipating.mul(PRICE_PRECISION).div(totalVeFXSSupplyStored);
+        return totalVeC3Participating.mul(PRICE_PRECISION).div(totalVeC3SupplyStored);
     }
 
-    // Only positions with locked veFXS can accrue yield. Otherwise, expired-locked veFXS
-    // is de-facto rewards for FXS.
-    function eligibleCurrentVeFXS(address account) public view returns (uint256 eligible_vefxs_bal, uint256 stored_ending_timestamp) {
-        uint256 curr_vefxs_bal = veFXS.balanceOf(account);
+    // Only positions with locked veC3 can accrue yield. Otherwise, expired-locked veC3
+    // is de-facto rewards for C3.
+    function eligibleCurrentVeC3(address account) public view returns (uint256 eligible_veC3_bal, uint256 stored_ending_timestamp) {
+        uint256 curr_veC3_bal = veC3.balanceOf(account);
         
         // Stored is used to prevent abuse
-        stored_ending_timestamp = userVeFXSEndpointCheckpointed[account];
+        stored_ending_timestamp = userVeC3EndpointCheckpointed[account];
 
-        // Only unexpired veFXS should be eligible
+        // Only unexpired veC3 should be eligible
         if (stored_ending_timestamp != 0 && (block.timestamp >= stored_ending_timestamp)){
-            eligible_vefxs_bal = 0;
+            eligible_veC3_bal = 0;
         }
         else if (block.timestamp >= stored_ending_timestamp){
-            eligible_vefxs_bal = 0;
+            eligible_veC3_bal = 0;
         }
         else {
-            eligible_vefxs_bal = curr_vefxs_bal;
+            eligible_veC3_bal = curr_veC3_bal;
         }
     }
 
@@ -151,17 +153,17 @@ contract veFXSYieldDistributorV4 is Owned, ReentrancyGuard {
         return Math.min(block.timestamp, periodFinish);
     }
 
-    function yieldPerVeFXS() public view returns (uint256) {
-        if (totalVeFXSSupplyStored == 0) {
-            return yieldPerVeFXSStored;
+    function yieldPerVeC3() public view returns (uint256) {
+        if (totalVeC3SupplyStored == 0) {
+            return yieldPerVeC3Stored;
         } else {
             return (
-                yieldPerVeFXSStored.add(
+                yieldPerVeC3Stored.add(
                     lastTimeYieldApplicable()
                         .sub(lastUpdateTime)
                         .mul(yieldRate)
                         .mul(1e18)
-                        .div(totalVeFXSSupplyStored)
+                        .div(totalVeC3SupplyStored)
                 )
             );
         }
@@ -171,12 +173,12 @@ contract veFXSYieldDistributorV4 is Owned, ReentrancyGuard {
         // Uninitialized users should not earn anything yet
         if (!userIsInitialized[account]) return 0;
 
-        // Get eligible veFXS balances
-        (uint256 eligible_current_vefxs, uint256 ending_timestamp) = eligibleCurrentVeFXS(account);
+        // Get eligible veC3 balances
+        (uint256 eligible_current_veC3, uint256 ending_timestamp) = eligibleCurrentVeC3(account);
 
-        // If your veFXS is unlocked
+        // If your veC3 is unlocked
         uint256 eligible_time_fraction = PRICE_PRECISION;
-        if (eligible_current_vefxs == 0){
+        if (eligible_current_veC3 == 0){
             // And you already claimed after expiration
             if (lastRewardClaimTime[account] >= ending_timestamp) {
                 // You get NOTHING. You LOSE. Good DAY ser!
@@ -190,22 +192,22 @@ contract veFXSYieldDistributorV4 is Owned, ReentrancyGuard {
             }
         }
 
-        // If the amount of veFXS increased, only pay off based on the old balance
+        // If the amount of veC3 increased, only pay off based on the old balance
         // Otherwise, take the midpoint
-        uint256 vefxs_balance_to_use;
+        uint256 veC3_balance_to_use;
         {
-            uint256 old_vefxs_balance = userVeFXSCheckpointed[account];
-            if (eligible_current_vefxs > old_vefxs_balance){
-                vefxs_balance_to_use = old_vefxs_balance;
+            uint256 old_veC3_balance = userVeC3Checkpointed[account];
+            if (eligible_current_veC3 > old_veC3_balance){
+                veC3_balance_to_use = old_veC3_balance;
             }
             else {
-                vefxs_balance_to_use = ((eligible_current_vefxs).add(old_vefxs_balance)).div(2); 
+                veC3_balance_to_use = ((eligible_current_veC3).add(old_veC3_balance)).div(2); 
             }
         }
 
         return (
-            vefxs_balance_to_use
-                .mul(yieldPerVeFXS().sub(userYieldPerTokenPaid[account]))
+            veC3_balance_to_use
+                .mul(yieldPerVeC3().sub(userYieldPerTokenPaid[account]))
                 .mul(eligible_time_fraction)
                 .div(1e18 * PRICE_PRECISION)
                 .add(yields[account])
@@ -225,24 +227,24 @@ contract veFXSYieldDistributorV4 is Owned, ReentrancyGuard {
         // Calculate the earnings first
         _syncEarned(account);
 
-        // Get the old and the new veFXS balances
-        uint256 old_vefxs_balance = userVeFXSCheckpointed[account];
-        uint256 new_vefxs_balance = veFXS.balanceOf(account);
+        // Get the old and the new veC3 balances
+        uint256 old_veC3_balance = userVeC3Checkpointed[account];
+        uint256 new_veC3_balance = veC3.balanceOf(account);
 
-        // Update the user's stored veFXS balance
-        userVeFXSCheckpointed[account] = new_vefxs_balance;
+        // Update the user's stored veC3 balance
+        userVeC3Checkpointed[account] = new_veC3_balance;
 
         // Update the user's stored ending timestamp
-        IveFXS.LockedBalance memory curr_locked_bal_pack = veFXS.locked(account);
-        userVeFXSEndpointCheckpointed[account] = curr_locked_bal_pack.end;
+        IveC3.LockedBalance memory curr_locked_bal_pack = veC3.locked(account);
+        userVeC3EndpointCheckpointed[account] = curr_locked_bal_pack.end;
 
         // Update the total amount participating
-        if (new_vefxs_balance >= old_vefxs_balance) {
-            uint256 weight_diff = new_vefxs_balance.sub(old_vefxs_balance);
-            totalVeFXSParticipating = totalVeFXSParticipating.add(weight_diff);
+        if (new_veC3_balance >= old_veC3_balance) {
+            uint256 weight_diff = new_veC3_balance.sub(old_veC3_balance);
+            totalVeC3Participating = totalVeC3Participating.add(weight_diff);
         } else {
-            uint256 weight_diff = old_vefxs_balance.sub(new_vefxs_balance);
-            totalVeFXSParticipating = totalVeFXSParticipating.sub(weight_diff);
+            uint256 weight_diff = old_veC3_balance.sub(new_veC3_balance);
+            totalVeC3Participating = totalVeC3Participating.sub(weight_diff);
         }
 
         // Mark the user as initialized
@@ -256,7 +258,7 @@ contract veFXSYieldDistributorV4 is Owned, ReentrancyGuard {
         if (account != address(0)) {
             uint256 earned0 = earned(account);
             yields[account] = earned0;
-            userYieldPerTokenPaid[account] = yieldPerVeFXSStored;
+            userYieldPerTokenPaid[account] = yieldPerVeC3Stored;
         }
     }
 
@@ -289,9 +291,9 @@ contract veFXSYieldDistributorV4 is Owned, ReentrancyGuard {
 
 
     function sync() public {
-        // Update the total veFXS supply
-        yieldPerVeFXSStored = yieldPerVeFXS();
-        totalVeFXSSupplyStored = veFXS.totalSupply();
+        // Update the total veC3 supply
+        yieldPerVeC3Stored = yieldPerVeC3();
+        totalVeC3SupplyStored = veC3.totalSupply();
         lastUpdateTime = lastTimeYieldApplicable();
     }
 

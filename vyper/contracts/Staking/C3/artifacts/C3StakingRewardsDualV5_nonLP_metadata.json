@@ -1,0 +1,1447 @@
+{
+	"compiler": {
+		"version": "0.8.11+commit.d7f03943"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_owner",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_rewardsToken0",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_rewardsToken1",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_stakingToken",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_c3_address",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_timelock_address",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_veC3_address",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "multiplier",
+						"type": "uint256"
+					}
+				],
+				"name": "LockedStakeMaxMultiplierUpdated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "secs",
+						"type": "uint256"
+					}
+				],
+				"name": "LockedStakeMinTime",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "secs",
+						"type": "uint256"
+					}
+				],
+				"name": "LockedStakeTimeForMaxMultiplier",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "multiplier",
+						"type": "uint256"
+					}
+				],
+				"name": "MaxVeC3Multiplier",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "oldOwner",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnerChanged",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnerNominated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "Recovered",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "reward",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "token_address",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "destination_address",
+						"type": "address"
+					}
+				],
+				"name": "RewardPaid",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newDuration",
+						"type": "uint256"
+					}
+				],
+				"name": "RewardsDurationUpdated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "token",
+						"type": "address"
+					}
+				],
+				"name": "RewardsPeriodRenewed",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "secs",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes32",
+						"name": "kek_id",
+						"type": "bytes32"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "source_address",
+						"type": "address"
+					}
+				],
+				"name": "StakeLocked",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes32",
+						"name": "kek_id",
+						"type": "bytes32"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "destination_address",
+						"type": "address"
+					}
+				],
+				"name": "WithdrawLocked",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "scale_factor",
+						"type": "uint256"
+					}
+				],
+				"name": "veC3PerC3ForMaxBoostUpdated",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "acceptOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "migrator_address",
+						"type": "address"
+					}
+				],
+				"name": "addMigrator",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "calcCurCombinedWeight",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "old_combined_weight",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "new_vec3_multiplier",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "new_combined_weight",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "combinedWeightOf",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "controller_address",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "earned",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getReward",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getRewardForDuration",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "greylist",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_address",
+						"type": "address"
+					}
+				],
+				"name": "greylistAddress",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "lastUpdateTime",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "secs",
+						"type": "uint256"
+					}
+				],
+				"name": "lockMultiplier",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "lock_max_multiplier",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "lock_time_for_max_multiplier",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "lock_time_min",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "lockedLiquidityOf",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "lockedStakesOf",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "kek_id",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "uint256",
+								"name": "start_timestamp",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "liquidity",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "ending_timestamp",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "lock_multiplier",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct C3StakingRewardsDualV5_nonLP.LockedStake[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "migrationsOn",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "staker_address",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "secs",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "start_timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "migrator_stakeLocked_for",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "staker_address",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "kek_id",
+						"type": "bytes32"
+					}
+				],
+				"name": "migrator_withdraw_locked",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "minVeC3ForMaxBoost",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_owner",
+						"type": "address"
+					}
+				],
+				"name": "nominateNewOwner",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "nominatedOwner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "periodFinish",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "tokenAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tokenAmount",
+						"type": "uint256"
+					}
+				],
+				"name": "recoverERC20",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "migrator_address",
+						"type": "address"
+					}
+				],
+				"name": "removeMigrator",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "rewardPerToken",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "rewardRate0",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "rewardRate1",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "rewards0",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "rewards1",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "rewardsCollectionPaused",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "rewardsDuration",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_controller_address",
+						"type": "address"
+					}
+				],
+				"name": "setController",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_lock_time_for_max_multiplier",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_lock_time_min",
+						"type": "uint256"
+					}
+				],
+				"name": "setLockedStakeTimeForMinAndMaxMultiplier",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_lock_max_multiplier",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_vec3_max_multiplier",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_vec3_per_c3_for_max_boost",
+						"type": "uint256"
+					}
+				],
+				"name": "setMultipliers",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_new_rate0",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_new_rate1",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "sync_too",
+						"type": "bool"
+					}
+				],
+				"name": "setRewardRates",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_rewardsDuration",
+						"type": "uint256"
+					}
+				],
+				"name": "setRewardsDuration",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_new_timelock",
+						"type": "address"
+					}
+				],
+				"name": "setTimelock",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "liquidity",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "secs",
+						"type": "uint256"
+					}
+				],
+				"name": "stakeLocked",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "migrator_address",
+						"type": "address"
+					}
+				],
+				"name": "stakerAllowMigrator",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "migrator_address",
+						"type": "address"
+					}
+				],
+				"name": "stakerDisallowMigrator",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "staker_allowed_migrators",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "stakesUnlocked",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "stakingPaused",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "sync",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "timelock_address",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "toggleMigrations",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "toggleRewardsCollection",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "toggleStaking",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "toggleToken1Rewards",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "toggleWithdrawals",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "token1_rewards_on",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "totalCombinedWeight",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "totalLiquidityLocked",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "unlockStakes",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "userRewardPerTokenPaid0",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "userRewardPerTokenPaid1",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "userStakedToken",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "valid_migrators",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "veC3Multiplier",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "vec3_max_multiplier",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "vec3_per_c3_for_max_boost",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "kek_id",
+						"type": "bytes32"
+					}
+				],
+				"name": "withdrawLocked",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "withdrawalsPaused",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/Staking/C3/C3_StakingRewardsDualV5_nonLP.sol": "C3StakingRewardsDualV5_nonLP"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/Common/Context.sol": {
+			"keccak256": "0x349d354c2122027b96adccd2f3be33646284b8d6313bb82ddfceafa383c56e74",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7f8cf36ab3ef5ce30582eead040874ac596bd22d89e410b56ed25cf310c7d8f0",
+				"dweb:/ipfs/QmNRqYXt81p1vVpCwpeE9qA59JUudBuVEuZ8NJFdYSxFUe"
+			]
+		},
+		"contracts/Curve/IveC3.sol": {
+			"keccak256": "0x16cab49b7da49b0102a68f3c3801bdf6e502c4a973dd0bae59d177707b6d679b",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://d4440af4fa41ae2e9768e5cab3b12325c5f41ce005cc6acf0077ee500516ae89",
+				"dweb:/ipfs/QmQrnTKFcDgr3pWzs124V9yfRZ1eUoY3N5GqrXYFhW1Z5N"
+			]
+		},
+		"contracts/ERC20/ERC20.sol": {
+			"keccak256": "0x76df6838d2f241785afb4b12887644830002f05da0c5640113efd324d7bb34c7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://01a861c5193254916ea455815a0995b7b2fc2eb5a062a9b284a1c6ba2d8ef3d7",
+				"dweb:/ipfs/QmYczirv6QAb53hnnmVReNw34fwhJAvpiQwaFjP2c2kAHW"
+			]
+		},
+		"contracts/ERC20/IERC20.sol": {
+			"keccak256": "0x87b223e1a60a9f01cdce00994e6a5eee7c2cc60b5a6e08fb71fd1540b9e9582b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://15296766497fd016513e69b6d2463b26d9bbda61349e82e59bb46a76a54984dc",
+				"dweb:/ipfs/QmPhjKuYPpfhhMe8C4hCr9t1TqJaUtWYb2U5AekzCMz1wC"
+			]
+		},
+		"contracts/ERC20/SafeERC20.sol": {
+			"keccak256": "0x06cf1b96ab017db13bf8b5551b328e70e91f978238c2ab9942021cf1b9fffb69",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://65dce97ddf84aebb6f544b4d5ebf9336b886e460469891e94d52d769feca304c",
+				"dweb:/ipfs/QmcRsshKd1CtarafgVTB9N1mx2ezo9iTMvtdaSN9PqCx3A"
+			]
+		},
+		"contracts/Math/Math.sol": {
+			"keccak256": "0x8b9c0fe74308bae38bd6084405b989541595c0cf52897078ff918dd7d1c0c9d7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://36f4726f325d07c9cc06b6fd683571b13c31b89cceaa16326ab380060b151a41",
+				"dweb:/ipfs/QmWDXozKwXG15koQaW4JfYB5so264iE2uVpCvwoE6pcBMX"
+			]
+		},
+		"contracts/Math/SafeMath.sol": {
+			"keccak256": "0x232951bf8e70e366e292534c1ae81f525cb7b347ff894bbff204079df8504fbb",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c2dec13a8af9e5940cdf762638262bf53820f0bd55cec256a98963a837af094f",
+				"dweb:/ipfs/Qmab6Tz6ssWjzCyuRtzpfGpHaXFmouw5hawGJy1sKtLbq6"
+			]
+		},
+		"contracts/Staking/C3/C3_StakingRewardsDualV5_nonLP.sol": {
+			"keccak256": "0x6577a548e18c4be291460a48b3c252cf7d6733add7a7356f39d4851ab8d2a708",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://4247c708579776da663def47733b69cc6eddff79608e6655e4a3525cecf762a9",
+				"dweb:/ipfs/QmS9vqFnVpCevC6RiPqukRGsXtXayNDcSmix1AD2fniDFM"
+			]
+		},
+		"contracts/Staking/Owned.sol": {
+			"keccak256": "0xeeb4a1c55270ec763ed7eed41d7458ad43542d7cc979109d046c346c9327866e",
+			"license": "GPL-2.0-or-later",
+			"urls": [
+				"bzz-raw://75d4b116b54631064b7b9527c30ec8a44d0ad22cf94be4599db40645ee82f24b",
+				"dweb:/ipfs/Qmeb9Xrhg8zp3peDmpsNgKicuxkdrruK9z7SdczpUVknyg"
+			]
+		},
+		"contracts/Uniswap/Interfaces/IUniswapV2Pair.sol": {
+			"keccak256": "0x8bd7faba5639a9e3d9fae52d8d2375043b20c3f2fa09496222b04ebf9c50e74d",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://3cbd8d6e694434f74faeeee53ff0f0d5877dc1beb14414dbeba6db2b5b536787",
+				"dweb:/ipfs/Qma9xixBFoJjXD6uWsm6fqEGx9b97nxhbRbByWFfQ1S6YK"
+			]
+		},
+		"contracts/Uniswap/TransferHelper.sol": {
+			"keccak256": "0x1da031e16941e82af9c182cc2f90fd55efec37630c6cca9c499d9b4e20e25ad9",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://411e3a6bac0572750898ab7a5ad12030b0186bef8b37bfced74a961e7cf74f28",
+				"dweb:/ipfs/QmZDYBbVC4i2nU66Zdpb33z3REheeVLmvyAeiBMXKEZuqf"
+			]
+		},
+		"contracts/Utils/Address.sol": {
+			"keccak256": "0xf1ac9716ba5d389fd4f807a615f56e67352ba4c3491e3358ea4f9a2d898149c2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e2590353920c0cb63d7e078b38f1504211dc2a0264421aaa35e54032600a5081",
+				"dweb:/ipfs/QmbVfuDtTS1GSBhRxTidktyJ2Pu3da5cAdFJM44zghN83E"
+			]
+		},
+		"contracts/Utils/ReentrancyGuard.sol": {
+			"keccak256": "0x0a8ae83f740bc68db9235c3ed788a1a2d80e1b796b3837dc2a8cefadf0e1cba1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://96a6069d22954edc0e5ab71b15a5ff079d5b45425fe13fc435c9c91685d3e8c5",
+				"dweb:/ipfs/QmUphp7m4SPmbJsyZ1xumqcxdvmAaVR7GLWucucq3QZMGR"
+			]
+		}
+	},
+	"version": 1
+}
